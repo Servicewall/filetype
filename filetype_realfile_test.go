@@ -33,6 +33,7 @@ func TestDetect_RealFiles(t *testing.T) {
 
 		// Rich Text
 		{"rtf.rtf", "rtf"},
+		{"test.pdf", "pdf"},
 
 		// Text / Markup
 		{"txt.txt", "txt"},
@@ -103,6 +104,7 @@ func TestDetectByContent_RealFiles(t *testing.T) {
 		{"pcx.pcx", "pcx"},
 		{"html.html", "html"},
 		{"xml.xml", "xml"},
+		{"test.pdf", "pdf"},
 	}
 
 	for _, tt := range tests {
