@@ -63,6 +63,8 @@ var wpsExtensions = map[string]bool{
 
 // suffixToExt maps filename suffixes to canonical extensions.
 var suffixToExt = map[string]string{
+	".txt":   "txt",
+	".csv":   "csv",
 	".htm":   "html",
 	".xhtml": "html",
 	".tiff":  "tif",
@@ -163,10 +165,6 @@ func DetectByContent(content []byte) string {
 // Content-based detection takes priority, with filename as fallback
 // for ambiguous formats (e.g. WPS Office files).
 func Detect(filename string, body []byte) string {
-	if strings.HasSuffix(strings.ToLower(filename), ".txt") {
-		return "txt"
-	}
-
 	// WPS Office formats have identical binary structure to MS Office.
 	// When the filename indicates WPS and content is OLE2 or ZIP, trust the filename.
 	if ext := extFromFilename(filename, wpsExtensions); ext != "" {
