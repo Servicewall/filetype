@@ -82,14 +82,13 @@ Parses OLE2 directory entries to identify doc/xls/ppt.
 
 ## Detection Priority
 
-1. Text filename extensions (`.txt`, `.csv`) take priority
-2. WPS Office filename extensions (wps/et/dps) with matching OLE2/ZIP content
-3. ZIP magic bytes -> OOXML / ODF / plain zip
-4. OLE2 magic bytes -> parse directory for doc/xls/ppt
-5. Custom magic byte table (RTF, 7z, XZ, TIFF, PCX)
-6. TAR magic at offset 257
-7. `net/http.DetectContentType` MIME-based detection
-8. Filename suffix fallback (htm, xhtml, jpeg, tiff, tgz, xml)
+1. WPS Office filename extensions (wps/et/dps) with matching OLE2/ZIP content
+2. ZIP magic bytes -> OOXML / ODF / plain zip
+3. OLE2 magic bytes -> parse directory for doc/xls/ppt
+4. Custom magic byte table (RTF, 7z, XZ, TIFF, PCX)
+5. TAR magic at offset 257
+6. `net/http.DetectContentType` MIME-based detection
+7. Filename suffix fallback (txt, csv, htm, xhtml, jpeg, tiff, tgz, xml)
 
 ## License
 

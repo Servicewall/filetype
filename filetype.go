@@ -61,14 +61,10 @@ var wpsExtensions = map[string]bool{
 	"wps": true, "et": true, "dps": true,
 }
 
-// textExtensions require a filename hint because plain-text formats do not
-// have reliable magic bytes and are intentionally not detected by content.
-var textExtensions = map[string]bool{
-	"txt": true, "csv": true,
-}
-
 // suffixToExt maps filename suffixes to canonical extensions.
 var suffixToExt = map[string]string{
+	".txt":   "txt",
+	".csv":   "csv",
 	".htm":   "html",
 	".xhtml": "html",
 	".tiff":  "tif",
@@ -169,10 +165,6 @@ func DetectByContent(content []byte) string {
 // Content-based detection takes priority, with filename as fallback
 // for ambiguous formats (e.g. WPS Office files).
 func Detect(filename string, body []byte) string {
-	if ext := extFromFilename(filename, textExtensions); ext != "" {
-		return ext
-	}
-
 	// WPS Office formats have identical binary structure to MS Office.
 	// When the filename indicates WPS and content is OLE2 or ZIP, trust the filename.
 	if ext := extFromFilename(filename, wpsExtensions); ext != "" {

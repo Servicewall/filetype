@@ -120,6 +120,13 @@ func TestDetect_TextExtensionHint(t *testing.T) {
 	}
 }
 
+func TestDetect_ContentTakesPriorityOverTextExtension(t *testing.T) {
+	pdf := []byte("%PDF-1.7\n")
+	if got := Detect("report.csv", pdf); got != "pdf" {
+		t.Errorf("Detect(%q) = %q, want %q", "report.csv", got, "pdf")
+	}
+}
+
 func TestDetectByContent_ZIP(t *testing.T) {
 	// Minimal ZIP with "word/" in the local file header
 	data := []byte{'P', 'K', 3, 4}
