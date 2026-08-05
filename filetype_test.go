@@ -101,6 +101,25 @@ func TestDetect_SuffixFallback(t *testing.T) {
 	}
 }
 
+func TestDetect_TextExtensionHint(t *testing.T) {
+	tests := []struct {
+		filename string
+		want     string
+	}{
+		{"readme.txt", "txt"},
+		{"data.csv", "csv"},
+		{"DATA.CSV", "csv"},
+	}
+	content := []byte("name,phone\nAlice,13800138000\n")
+	for _, tt := range tests {
+		t.Run(tt.filename, func(t *testing.T) {
+			if got := Detect(tt.filename, content); got != tt.want {
+				t.Errorf("Detect(%q) = %q, want %q", tt.filename, got, tt.want)
+			}
+		})
+	}
+}
+
 func TestDetectByContent_ZIP(t *testing.T) {
 	// Minimal ZIP with "word/" in the local file header
 	data := []byte{'P', 'K', 3, 4}

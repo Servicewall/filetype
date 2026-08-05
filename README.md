@@ -52,7 +52,7 @@ if filetype.IsOLE2(fileBytes) {
 | Images | jpg, png, gif, bmp, webp, tif, pcx |
 | Archives | zip, gz, tar, rar, 7z, xz |
 | Markup | html, xml |
-| Text | txt |
+| Text | txt, csv |
 
 ## API
 
@@ -82,7 +82,7 @@ Parses OLE2 directory entries to identify doc/xls/ppt.
 
 ## Detection Priority
 
-1. `.txt` extension short-circuits to `"txt"`
+1. Text filename extensions (`.txt`, `.csv`) take priority
 2. WPS Office filename extensions (wps/et/dps) with matching OLE2/ZIP content
 3. ZIP magic bytes -> OOXML / ODF / plain zip
 4. OLE2 magic bytes -> parse directory for doc/xls/ppt
