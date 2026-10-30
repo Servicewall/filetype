@@ -27,6 +27,8 @@ var magicTable = []magicDef{
 	{0, []byte{0x4D, 0x4D, 0x00, 0x2A}, "tif"},
 	// PCX: 0A (with extra validation)
 	{0, []byte{0x0A}, "pcx"},
+	// DICOM Part 10: "DICM" at offset 128, after the 128-byte preamble
+	{128, []byte("DICM"), "dcm"},
 }
 
 // TAR magic at offset 257
@@ -70,6 +72,9 @@ var suffixToExt = map[string]string{
 	".tiff":  "tif",
 	".jpeg":  "jpg",
 	".tgz":   "gz",
+	".dcm":   "dcm",
+	".dicom": "dcm",
+	".dic":   "dcm",
 }
 
 // IsZip checks the PK magic bytes at the start of data.
@@ -139,7 +144,7 @@ func DetectByContent(content []byte) string {
 	// 3. Custom magic bytes table
 	for _, m := range magicTable {
 		end := m.offset + len(m.magic)
-		if len(content) > end && bytes.Equal(content[m.offset:end], m.magic) {
+		if len(content) >= end && bytes.Equal(content[m.offset:end], m.magic) {
 			if m.ext == "pcx" && !isValidPCX(content) {
 				continue
 			}
