@@ -50,6 +50,7 @@ if filetype.IsOLE2(fileBytes) {
 | WPS Office | wps, et, dps |
 | Documents | pdf, rtf |
 | Images | jpg, png, gif, bmp, webp, tif, pcx |
+| Medical | dcm |
 | Archives | zip, gz, tar, rar, 7z, xz |
 | Markup | html, xml |
 | Text | txt, csv |
@@ -85,10 +86,10 @@ Parses OLE2 directory entries to identify doc/xls/ppt.
 1. WPS Office filename extensions (wps/et/dps) with matching OLE2/ZIP content
 2. ZIP magic bytes -> OOXML / ODF / plain zip
 3. OLE2 magic bytes -> parse directory for doc/xls/ppt
-4. Custom magic byte table (RTF, 7z, XZ, TIFF, PCX)
+4. Custom magic byte table (RTF, 7z, XZ, TIFF, PCX, DICOM)
 5. TAR magic at offset 257
 6. `net/http.DetectContentType` MIME-based detection
-7. Filename suffix fallback (txt, csv, htm, xhtml, jpeg, tiff, tgz, xml)
+7. Filename suffix fallback (txt, csv, htm, xhtml, jpeg, tiff, tgz, dcm, dicom, dic, xml)
 
 ## License
 

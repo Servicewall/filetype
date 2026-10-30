@@ -89,6 +89,9 @@ func TestDetect_SuffixFallback(t *testing.T) {
 		{"image.tiff", "tif"},
 		{"archive.tgz", "gz"},
 		{"data.xml", "xml"},
+		{"scan.dcm", "dcm"},
+		{"scan.dicom", "dcm"},
+		{"scan.dic", "dcm"},
 		{"unknown.bin", ""},
 	}
 	for _, tt := range tests {
@@ -138,6 +141,69 @@ func TestDetectByContent_ZIP(t *testing.T) {
 	}
 }
 
+func buildDICOM(preamble []byte) []byte {
+	data := append([]byte(nil), preamble...)
+	data = append(data, []byte("DICM")...)
+	// Minimal explicit VR little-endian element: (0002,0000) UL, length 4.
+	data = append(data, 0x02, 0x00, 0x00, 0x00, 'U', 'L', 0x04, 0x00, 0x00, 0x00, 0x00, 0x00)
+	return data
+}
+
+func TestDetect_DICOM(t *testing.T) {
+	tests := []struct {
+		name     string
+		filename string
+		content  []byte
+		want     string
+	}{
+		{
+			name:     "zero preamble",
+			filename: "scan.dcm",
+			content:  buildDICOM(make([]byte, 128)),
+			want:     "dcm",
+		},
+		{
+			name:     "non-zero preamble",
+			filename: "scan.dcm",
+			content:  buildDICOM(bytesOf(128, 0x58)),
+			want:     "dcm",
+		},
+		{
+			name:     "exact 132-byte header",
+			filename: "scan.dcm",
+			content:  append(make([]byte, 128), []byte("DICM")...),
+			want:     "dcm",
+		},
+		{
+			name:     "short input with DICM at offset 127",
+			filename: "scan.bin",
+			content:  append(make([]byte, 127), []byte("DICM")...),
+			want:     "",
+		},
+		{
+			name:     "DICM at wrong offset",
+			filename: "scan.bin",
+			content:  append([]byte("DICM"), make([]byte, 128)...),
+			want:     "",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := Detect(tt.filename, tt.content); got != tt.want {
+				t.Errorf("Detect(%q, %d bytes) = %q, want %q", tt.filename, len(tt.content), got, tt.want)
+			}
+		})
+	}
+}
+
+func bytesOf(n int, b byte) []byte {
+	data := make([]byte, n)
+	for i := range data {
+		data[i] = b
+	}
+	return data
+}
+
 func TestDetectByContent_MagicBytes(t *testing.T) {
 	tests := []struct {
 		name    string
@@ -146,6 +212,7 @@ func TestDetectByContent_MagicBytes(t *testing.T) {
 	}{
 		{"RTF", []byte{0x7B, 0x5C, 0x72, 0x74, 0x66, 0x31}, "rtf"},
 		{"7Z", []byte{0x37, 0x7A, 0xBC, 0xAF, 0x27, 0x1C, 0x00}, "7z"},
+		{"DICOM", buildDICOM(make([]byte, 128)), "dcm"},
 		{"empty", nil, ""},
 	}
 	for _, tt := range tests {
